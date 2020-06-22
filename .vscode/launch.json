@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "CodeLens (Launch) - Node",
+      "request": "launch",
+      "mainClass": "Node",
+      "projectName": "njit-alg-scratch_eda1a585"
+    },
+    {
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
