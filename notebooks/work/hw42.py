@@ -17,7 +17,7 @@ def sum_target_weights(wg):
 
     return rv  # incident_matrix
 
-    
+
 def sum_target_weights_using_dict(wg):
     targets = dict()
 
@@ -31,11 +31,6 @@ def sum_target_weights_using_dict(wg):
                 targets[t] = w
 
     return targets
-
-
-
-#
-#
 
 
 G = [[(0, 1, 1), (0, 2, 5), (0, 3, 11), (0, 4, 8)],
