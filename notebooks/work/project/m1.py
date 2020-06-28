@@ -13,8 +13,11 @@
 #
 # Write a function Distance(t1,t2), where t1 and t2 are the identity numbers of two cells, and the output is the distance between them. The distance is the minimum number of connected cells that one has to traverse to go from t1 to t2. (Hint: Use function NumberToCoordinate for this)
 
+import os
+import pathlib
+cur_dir = pathlib.Path(__file__).parent.absolute()
 
-file_name = './shawn-cicoria.txt'
+file_name = os.path.join(cur_dir, 'shawn-cicoria.txt')
 
 
 contents = ''
