@@ -1,7 +1,7 @@
-
 #
 # Write a function CoordinateToNumber(i,j,m,n) that takes a coordinate (i,j)
-# #and maps it to a unique number t in `[0,mn − 1]`, which is then returned by the function.
+# #and maps it to a unique number t in `[0,mn − 1]`, which is then returned
+# by the function.
 #
 # Write a function NumberToCoordinate(t,m,n) that takes a number
 #  t and returns the corresponding coordinate. This function must
@@ -18,7 +18,8 @@
 # Write a function Distance(t1,t2), where t1 and t2 are the
 # identity numbers of two cells, and the output is the distance between them.
 # The distance is the minimum number of connected cells
-# that one has to traverse to go from t1 to t2. (Hint: Use function NumberToCoordinate for this)
+# that one has to traverse to go from t1 to t2. (Hint: Use function
+# NumberToCoordinate for this)
 
 import os
 import pathlib
@@ -43,7 +44,7 @@ def load_file(file_name):
     return rv
 
 
-def get_land_points(data, m, n):
+def find_land_cells(data, m, n):
     """returns the points that have land markers"""
     """if the point has a land marker return it"""
     rv = []
@@ -77,12 +78,45 @@ def distance(t1, t2, m=3, n=5):
 
     return rv
 
+#     0    1    2    3    4    5    6    7    8    9
+# 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+# 1 ['0', '1', '1', '0', '0', '0', '1', '0', '0', '0']
+# 2 ['0', '0', '0', '0', '0', '0', '1', '0', '0', '0']
+# 3 ['0', '0', '0', '1', '1', '0', '1', '0', '0', '0']
+# 4 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 5 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 6 ['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
+# 7 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+# 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
+# 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+
+
+def generate_neighbors(land_cells_list, x, y, m, n):
+    """should return number of neighbors for the item"""
+    """ can be 0, 2, 3, 4 """
+    result = []
+    # this 'mess' finds the items on outside of the x,y
+    for r, c in [(x + i, y + j)
+                 for i in (-1, 0, 1)  # rows over/under
+                 for j in (-1, 0, 1)  # cols left/right
+                 if i != 0 or j != 0]:  # all but THIS cell
+
+        if [r, c] in land_cells_list:
+            rv = coordinate_to_number(r, c, m, n)
+            result.append(rv)
+
+    return result
+
+
+def explore_island():
+    pass
+
 
 if __name__ == '__main__':
     contents = load_file(file_name)
-    points = get_land_points(contents, m, n)
+    land_cell_list = find_land_cells(contents, m, n)
 
     print('file contents: \n{}'.format(contents))
-    print('\nland points: \n{}'.format(points))
+    print('\nland points: \n{}'.format(land_cell_list))
 
     print('done')

@@ -2,7 +2,12 @@ import unittest
 import os
 import pathlib
 
-from m1 import load_file, coordinate_to_number, number_to_coordinate, distance
+from m1 import (load_file,
+                coordinate_to_number,
+                number_to_coordinate,
+                distance,
+                find_land_cells,
+                generate_neighbors)
 
 
 class m1_part_1(unittest.TestCase):
@@ -67,6 +72,58 @@ class m1_part_2(unittest.TestCase):
         self.assertEqual(d, rv, 'incorrect distance')
 
 
-if __name__ == '__main__':
+#     0    1    2    3    4    5    6    7    8    9
+# 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+# 1 ['0', '1', '1', '0', '0', '0', '1', '0', '0', '0']
+# 2 ['0', '0', '0', '0', '0', '0', '1', '0', '0', '0']
+# 3 ['0', '0', '0', '1', '1', '0', '1', '0', '0', '0']
+# 4 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 5 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 6 ['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
+# 7 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+# 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
+# 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+class m2_part_1(unittest.TestCase):
+    def setUp(self):
+        m, n = 10, 10
+        cur_dir = pathlib.Path(__file__).parent.absolute()
+        self.file_name = os.path.join(cur_dir, 'shawn-cicoria.txt')
+        self.contents = load_file(self.file_name)
+        self.land_cell_list = find_land_cells(self.contents, m, n)
 
+    def test_find_neighbor_1(self):
+        """should return number of neighbors for the item"""
+        m, n = 10, 10
+        a1 = coordinate_to_number(1, 2, m, n)
+        r2 = generate_neighbors(self.land_cell_list, 1, 1, m, n)
+
+        self.assertIn(a1, r2, 'did not find neighbor')
+
+    def test_find_neighbor_2(self):
+        """should return number of neighbors for the item"""
+        m, n = 10, 10
+        a1 = coordinate_to_number(2, 6, m, n)
+        r2 = generate_neighbors(self.land_cell_list, 1, 6, m, n)
+
+        self.assertIn(a1, r2, 'did not find neighbor')
+
+    def test_find_neighbor_3(self):
+        """should return number of neighbors for the item"""
+        m, n = 10, 10
+        a1 = coordinate_to_number(1, 6, m, n)
+        a2 = coordinate_to_number(3, 6, m, n)
+        r2 = generate_neighbors(self.land_cell_list, 2, 6, m, n)
+
+        self.assertIn(a1, r2, 'a1 did not find neighbor')
+        self.assertIn(a2, r2, 'a2 did not find neighbor')
+
+    def test_find_neighbor_4(self):
+        """should return number of neighbors for the item"""
+        m, n = 10, 10
+        a1 = coordinate_to_number(8, 8, m, n)
+        r2 = generate_neighbors(self.land_cell_list, 8, 9, m, n)
+
+        self.assertIn(a1, r2, 'a1 did not find neighbor')
+
+if __name__ == '__main__':
     unittest.main()
