@@ -39,8 +39,14 @@ class IslandProject():
         self.m = m
         self.n = n
 
-    def load_file(self, file_name):
-        """load file to an array line by line"""
+    def load_file(self, file_name) -> list:
+        '''load file to an array line by line
+        Parameters:
+        file_name (str): text file with x,y pairs in m x n layout
+        Returns:
+        list:all lines in m x n
+        '''
+
         rv = []
         with open(file_name) as f:
             line = list(f.readline().strip())
@@ -49,11 +55,19 @@ class IslandProject():
                 line = list(f.readline().strip())
 
         self.contents = rv
+        
+        self.land_cell_list = self.find_land_cells()
+        
         return self.contents
 
-    def find_land_cells(self):
-        """returns the points that have land markers"""
-        """if the point has a land marker return it"""
+    def find_land_cells(self) -> list:
+        '''returns the points that have land markers
+        if the point has a land marker return it
+
+        :returns: list of numbers
+        
+        :rtype: int
+        '''
         rv = []
         for r, i in enumerate(range(self.n)):
             for c, j in enumerate(range(self.m)):
@@ -82,10 +96,16 @@ class IslandProject():
         rv = abs(i1 - i2) + abs(j1 - j2)
         return rv
 
+    def generate_neighbors_from_t(self, t1) -> list:
+        x, y = self.number_to_coordinate(t1)
+        r1, r2 = self.generate_neighbors(x, y)
+        return r1
+
     def generate_neighbors(self, x, y) -> list:
         """should return number of neighbors for the item"""
         """ can be 0, 2, 3, 4 """
         result = []
+        result_coord = []
         # this 'mess' finds the items on outside of the x,y
         for r, c in [(x, y + j)
                      for j in (-1, 0, 1)  # cols left/right
@@ -94,6 +114,7 @@ class IslandProject():
             if [r, c] in self.land_cell_list:
                 rv = self.coordinate_to_number(r, c)
                 result.append(rv)
+                result_coord.append(self.number_to_coordinate(rv))
 
         for r, c in [(x + i, y)
                      for i in (-1, 0, 1)  # rows over/under
@@ -102,43 +123,44 @@ class IslandProject():
             if [r, c] in self.land_cell_list:
                 rv = self.coordinate_to_number(r, c)
                 result.append(rv)
+                result_coord.append(self.number_to_coordinate(rv))
 
-        return result
+        return result, result_coord
 
     def explore_island(self, t1) -> list:
         result = [t1]
         x, y = self.number_to_coordinate(t1)
-        a = self.generate_neighbors(x, y)
+        a, a_coords = self.generate_neighbors(x, y)
         result = result + a
         for n in a:
             r, c = self.number_to_coordinate(n)
-            nl = self.generate_neighbors(r, c)
+            nl, nl_coord = self.generate_neighbors(r, c)
             for z in nl:
                 if z not in result:
                     result.append(z)
 
         return result
 
-    def explore_island_(self, t1) -> list:
-        result = {}
-        x, y = self.number_to_coordinate(t1)
-        result[t1] = [x, y]
+    # def explore_island_(self, t1) -> list:
+    #     result = {}
+    #     x, y = self.number_to_coordinate(t1)
+    #     result[t1] = [x, y]
         
-        for n in self.generate_neighbors(x, y):
-            r, c = self.number_to_coordinate(n)
-            self.foo(result, n)
-            # result[n] = [r, c]
-            # sub = self.explore_island(n)
-            # result = sub # {**result, **sub}
+    #     for n in self.generate_neighbors(x, y):
+    #         r, c = self.number_to_coordinate(n)
+    #         self.foo(result, n)
+    #         # result[n] = [r, c]
+    #         # sub = self.explore_island(n)
+    #         # result = sub # {**result, **sub}
 
-        return result
+    #     return result
 
-    def foo_(self, n, L: dict):
-        x, y = self.number_to_coordinate(n)
-        for n2 in self.generate_neighbors(x, y):
-            if n2 not in L:
-                r, c = self.number_to_coordinate(n2)
-                L[n2] = r, c
+    # def foo_(self, n, L: dict):
+    #     x, y = self.number_to_coordinate(n)
+    #     for n2 in self.generate_neighbors(x, y):
+    #         if n2 not in L:
+    #             r, c = self.number_to_coordinate(n2)
+    #             L[n2] = r, c
 
 
 if __name__ == '__main__':

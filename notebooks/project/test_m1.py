@@ -83,14 +83,14 @@ class m2_part_1(unittest.TestCase):
     def test_find_neighbor_1(self):
         """should return number of neighbors for the item"""
         a1 = self.p.coordinate_to_number(1, 2)
-        r2 = self.p.generate_neighbors(1, 1)
+        r2, _ = self.p.generate_neighbors(1, 1)
 
         self.assertIn(a1, r2, 'did not find neighbor')
 
     def test_find_neighbor_2(self):
         """should return number of neighbors for the item"""
         a1 = self.p.coordinate_to_number(2, 6)
-        r2 = self.p.generate_neighbors(1, 6)
+        r2, _ = self.p.generate_neighbors(1, 6)
 
         self.assertIn(a1, r2, 'did not find neighbor')
 
@@ -98,7 +98,7 @@ class m2_part_1(unittest.TestCase):
         """should return number of neighbors for the item"""
         a1 = self.p.coordinate_to_number(1, 6)
         a2 = self.p.coordinate_to_number(3, 6)
-        r2 = self.p.generate_neighbors(2, 6)
+        r2, _ = self.p.generate_neighbors(2, 6)
 
         self.assertIn(a1, r2, 'a1 did not find neighbor')
         self.assertIn(a2, r2, 'a2 did not find neighbor')
@@ -106,7 +106,7 @@ class m2_part_1(unittest.TestCase):
     def test_find_neighbor_4(self):
         """should return number of neighbors for the item"""
         a1 = self.p.coordinate_to_number(8, 8)
-        r2 = self.p.generate_neighbors(8, 9)
+        r2,_ = self.p.generate_neighbors(8, 9)
 
         self.assertIn(a1, r2, 'a1 did not find neighbor')
 
@@ -115,7 +115,7 @@ class m2_part_1(unittest.TestCase):
         a1 = self.p.coordinate_to_number(8, 2)
         a2 = self.p.coordinate_to_number(9, 2)
         a3 = self.p.coordinate_to_number(6, 3)
-        r2 = self.p.generate_neighbors(7, 2)
+        r2,_ = self.p.generate_neighbors(7, 2)
 
         self.assertIn(a1, r2, 'a1 did not find neighbor')
         #self.assertIn(a2, r2, 'a2 did not find neighbor')
