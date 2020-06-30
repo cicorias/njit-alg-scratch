@@ -15,5 +15,6 @@
   ],
   "python.testing.pytestEnabled": false,
   "python.testing.nosetestsEnabled": false,
-  "python.analysis.cachingLevel": "Library"
+  "python.dataScience.disableJupyterAutoStart": true,
+  "python.languageServer": "Jedi"
 }

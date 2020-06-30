@@ -188,14 +188,81 @@ class m2_part_5(unittest.TestCase):
     def test_find_islands_1(self):
         exp = [[4, 5]]
         islands = self.p.find_islands()
-        #print(islands)
+        # print(islands)
         self.assertListEqual(exp, islands)
 
     def test_find_islands_10(self):
-        exp = [[11, 12], [16, 26, 36], [33, 34, 43, 53, 63, 64], [72, 82, 92], [87, 88, 89]]
+        exp = [[11, 12], [16, 26, 36], [33, 34, 43, 53, 63, 64], [72, 82, 92],
+               [87, 88, 89]]
         islands = self.p2.find_islands()
-        #print(islands)
+        # print(islands)
         self.assertListEqual(exp, islands)
-    
+
+
+class m3_part_1(unittest.TestCase):
+    def setUp(self):
+        m, n = 3, 3
+        self.p = IslandProject(m, n)
+        cur_dir = pathlib.Path(__file__).parent.absolute()
+        self.file_name = os.path.join(cur_dir, 'shawn-cicoria_3x3.txt')
+        self.contents = self.p.load_file(self.file_name)
+
+        m, n = 10, 10
+        self.p2 = IslandProject(m, n)
+        self.file_name2 = os.path.join(cur_dir, 'shawn-cicoria.txt')
+        self.contents2 = self.p2.load_file(self.file_name2)
+
+    def test_island_distance_1(self):
+        isl1, isl2 = [11, 12], [16, 26, 36]
+
+        rv = self.p2.island_distance(isl1, isl2)
+
+        self.assertEqual(4, rv, 'distance is invalid')
+
+    def test_island_distance_2(self):
+        isl1, isl2 = [11, 12], [33, 34, 43, 53, 63, 64]
+
+        rv = self.p2.island_distance(isl1, isl2)
+
+        self.assertEqual(3, rv, 'distance is invalid')
+
+    def test_island_distance_3(self):
+        isl1, isl2 = [11, 12], [87, 88, 89]
+
+        rv = self.p2.island_distance(isl1, isl2)
+
+        self.assertEqual(12, rv, 'distance is invalid')
+
+    def test_island_distance_4(self):
+        isl1, isl2 = [72, 82, 92], [87, 88, 89]
+
+        rv = self.p2.island_distance(isl1, isl2)
+
+        self.assertEqual(5, rv, 'distance is invalid')
+
+
+class m3_part_2(unittest.TestCase):
+    def setUp(self):
+        m, n = 3, 3
+        self.p = IslandProject(m, n)
+        cur_dir = pathlib.Path(__file__).parent.absolute()
+        self.file_name = os.path.join(cur_dir, 'shawn-cicoria_3x3.txt')
+        self.contents = self.p.load_file(self.file_name)
+
+        m, n = 10, 10
+        self.p2 = IslandProject(m, n)
+        self.file_name2 = os.path.join(cur_dir, 'shawn-cicoria.txt')
+        self.contents2 = self.p2.load_file(self.file_name2)
+
+    def test_island_graph_1(self):
+        rv = self.p2.island_graph()
+        expected = [[0, 1, 4], [0, 2, 3], [0, 3, 6], [0, 4, 12],
+                    [1, 2, 2], [1, 3, 8], [1, 4, 6],
+                    [2, 3, 2], [2, 4, 5],
+                    [3, 4, 5]]
+                    
+        self.assertListEqual(expected, rv, 'bad graph')
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=1)

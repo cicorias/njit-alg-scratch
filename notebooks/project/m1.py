@@ -111,6 +111,8 @@ class IslandProject():
         return rv
 
     def _explore_helper(self, t1, data):
+        '''uses recursion to find all the neighbors
+            along with the linked neighbors'''
         if t1 not in data:
             data.append(t1)
             # print('t1 to get neighbors: {}'.format(t1))
@@ -135,11 +137,39 @@ class IslandProject():
             if t1 not in visited:
                 c = self.explore_island(t1)
                 islands.append(c)
-                for d in c:
+                for d in c:  # here we want to NOT revisit these places.
                     if d not in visited:
                         visited.append(d)
 
         return islands
+
+    def island_distance(self, isl1, isl2):
+        min_distance = 9999
+        for i in isl1:
+            for j in isl2:
+                min_distance = min(self.distance(i, j), min_distance)
+        
+        return min_distance
+
+    def island_graph(self):
+        '''return a list of island to island and distance
+           between each'''
+
+        graph = []
+        # for i in range(len(self.land_cell_list)):
+        #     for j in range(1, len(self.land_cell_list)):
+        #         d1 = self.distance(i, j)
+        islands = self.find_islands()
+        for i, isl1 in enumerate(islands):
+            for j, _ in enumerate(islands, start=i + 1):  # enumerte start-dumb
+                if j == len(islands):
+                    break
+                
+                isl2 = islands[j]
+                i_distance = self.island_distance(isl1, isl2)
+                graph.append([i, j, i_distance])
+
+        return graph
 
 
 if __name__ == '__main__':
