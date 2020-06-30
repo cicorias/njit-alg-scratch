@@ -18,6 +18,8 @@ class IslandProject():
     def __init__(self, m, n):
         self.m = m
         self.n = n
+        self.weighted_adjacency_list = None
+        self.mst = None
 
     def load_file(self, file_name) -> list:
         '''load file to an array line by line
@@ -37,6 +39,10 @@ class IslandProject():
         self.contents = rv
         self.land_cell_list = self.find_land_cells()
         return self.contents
+
+    def print_pretty(self, d):
+        for i in range(len(d)):
+            print(d[i])
 
     def find_land_cells(self) -> list:
         '''returns the points that have land markers
@@ -156,20 +162,47 @@ class IslandProject():
            between each'''
 
         graph = []
-        # for i in range(len(self.land_cell_list)):
-        #     for j in range(1, len(self.land_cell_list)):
-        #         d1 = self.distance(i, j)
         islands = self.find_islands()
         for i, isl1 in enumerate(islands):
             for j, _ in enumerate(islands, start=i + 1):  # enumerte start-dumb
                 if j == len(islands):
                     break
-                
+
                 isl2 = islands[j]
                 i_distance = self.island_distance(isl1, isl2)
                 graph.append([i, j, i_distance])
 
+        self.weighted_adjacency_list = graph
         return graph
+
+    def generate_mst(self):
+        import networkx as nx
+        if self.weighted_adjacency_list is None:
+            self.island_graph()
+
+        G = nx.Graph()  # nx.cycle_graph(4)  # nx.Graph()
+        for i in self.weighted_adjacency_list:
+            G.add_edge(i[0], i[1], weight=i[2])
+
+        T = nx.minimum_spanning_tree(G)
+        self.mst = T
+        return T
+
+    def get_mst_size(self):
+        if self.mst is None:
+            self.generate_mst()
+
+        return self.mst.size(weight='weight')
+
+    def draw_graph(self):
+        import networkx as nx
+        import matplotlib.pyplot as plt
+        if self.mst is None:
+            self.generate_mst()
+
+        # nx.draw(self.mst)
+        nx.draw(self.mst,  nodecolor='r', edge_color='b')
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -185,5 +218,7 @@ if __name__ == '__main__':
 
     print('file contents: \n{}'.format(contents))
     print('\nland points: \n{}'.format(land_cell_list))
+
+    p.draw_graph()
 
     print('done')

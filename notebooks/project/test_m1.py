@@ -260,8 +260,17 @@ class m3_part_2(unittest.TestCase):
                     [1, 2, 2], [1, 3, 8], [1, 4, 6],
                     [2, 3, 2], [2, 4, 5],
                     [3, 4, 5]]
-                    
+
         self.assertListEqual(expected, rv, 'bad graph')
+
+    def test_generate_mst(self):
+        self.p2.generate_mst()
+        self.p2.draw_graph()
+        # print(graph)
+
+    def test_get_mst_size_1(self):
+        s = self.p2.get_mst_size()
+        self.assertEqual(s, 12, 'mst wrong size')
 
 
 if __name__ == '__main__':
