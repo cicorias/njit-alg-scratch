@@ -120,7 +120,7 @@ class m2_part_1(unittest.TestCase):
         self.assertIn(a1, r2, 'a1 did not find neighbor')
         #self.assertIn(a2, r2, 'a2 did not find neighbor')
         self.assertNotIn(a3, r2, 'a3 FOUND and should not be neighbor')
-        print(r2)
+        #print(r2)
 
 
 class m2_part_4(unittest.TestCase):
@@ -161,13 +161,13 @@ class m2_part_4(unittest.TestCase):
         t1 = self.p.coordinate_to_number(4, 3)
         rv = self.p.explore_island(t1)
         self.assertIsNotNone(rv)
-        print(rv)
-        #self.assertListEqual(sorted(rv), expected, 'explore island difference')
-        for i in rv:
-            print(i)
-            x, y = self.p.number_to_coordinate(i)
-            print('\n [{}, {}]'.format(x, y))
+        # print(rv)
+        self.assertListEqual(sorted(rv), expected, 'explore island difference')
+        # for i in rv:
+        #     print(i)
+        #     x, y = self.p.number_to_coordinate(i)
+        #     print('\n [{}, {}]'.format(x, y))
         
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=1)
