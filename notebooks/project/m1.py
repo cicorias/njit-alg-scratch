@@ -1,25 +1,5 @@
-#
-# Write a function CoordinateToNumber(i,j,m,n) that takes a coordinate (i,j)
-# #and maps it to a unique number t in `[0,mn − 1]`, which is then returned
-# by the function.
-#
-# Write a function NumberToCoordinate(t,m,n) that takes a number
-#  t and returns the corresponding coordinate. This function must
-#  be the inverse of CoordinateToNumber. That is, for all i,j,m,n we must have
-#
-# ```
-# NumberToCoordinate(CoordinateToNumber(i,j,m,n),m,n) = (i,j)
-# ```
-#
-# The two steps above mean that besides its coordinates, each
-# #cell has its own unique identity number in `[0,mn − 1]`
-#
-#
-# Write a function Distance(t1,t2), where t1 and t2 are the
-# identity numbers of two cells, and the output is the distance between them.
-# The distance is the minimum number of connected cells
-# that one has to traverse to go from t1 to t2. (Hint: Use function
-# NumberToCoordinate for this)
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 #     0    1    2    3    4    5    6    7    8    9
 # 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
@@ -55,9 +35,7 @@ class IslandProject():
                 line = list(f.readline().strip())
 
         self.contents = rv
-        
         self.land_cell_list = self.find_land_cells()
-        
         return self.contents
 
     def find_land_cells(self) -> list:
@@ -65,7 +43,7 @@ class IslandProject():
         if the point has a land marker return it
 
         :returns: list of numbers
-        
+
         :rtype: int
         '''
         rv = []
@@ -128,39 +106,40 @@ class IslandProject():
         return result, result_coord
 
     def explore_island(self, t1) -> list:
-        result = [t1]
-        x, y = self.number_to_coordinate(t1)
-        a, a_coords = self.generate_neighbors(x, y)
-        result = result + a
-        for n in a:
-            r, c = self.number_to_coordinate(n)
-            nl, nl_coord = self.generate_neighbors(r, c)
-            for z in nl:
-                if z not in result:
-                    result.append(z)
+        data = []
+        rv = self._explore_helper(t1, data)
+        return rv
 
-        return result
+    def _explore_helper(self, t1, data):
+        if t1 not in data:
+            data.append(t1)
+            # print('t1 to get neighbors: {}'.format(t1))
+            z = self.generate_neighbors_from_t(t1)
+            # print('z: {}'.format(z))
+            for f in z:
+                # print('f_all: {}'.format(f))
+                data = self._explore_helper(f, data)
+        else:
+            # print(' t1 already done: {}'.format(t1))
+            pass
+        return data
 
-    # def explore_island_(self, t1) -> list:
-    #     result = {}
-    #     x, y = self.number_to_coordinate(t1)
-    #     result[t1] = [x, y]
-        
-    #     for n in self.generate_neighbors(x, y):
-    #         r, c = self.number_to_coordinate(n)
-    #         self.foo(result, n)
-    #         # result[n] = [r, c]
-    #         # sub = self.explore_island(n)
-    #         # result = sub # {**result, **sub}
+    def find_islands(self) -> list:
+        """reads in list of land cells
+            outputs list of islands -
+            islands are sub lists"""
+        visited = []  # t1 numbers that DO not need to be done
+        islands = []  # the [[t1, t2], [t3]] format.
+        for i in self.land_cell_list:
+            t1 = self.coordinate_to_number(i[0], i[1])
+            if t1 not in visited:
+                c = self.explore_island(t1)
+                islands.append(c)
+                for d in c:
+                    if d not in visited:
+                        visited.append(d)
 
-    #     return result
-
-    # def foo_(self, n, L: dict):
-    #     x, y = self.number_to_coordinate(n)
-    #     for n2 in self.generate_neighbors(x, y):
-    #         if n2 not in L:
-    #             r, c = self.number_to_coordinate(n2)
-    #             L[n2] = r, c
+        return islands
 
 
 if __name__ == '__main__':

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import unittest
 import os
 import pathlib
@@ -106,21 +109,21 @@ class m2_part_1(unittest.TestCase):
     def test_find_neighbor_4(self):
         """should return number of neighbors for the item"""
         a1 = self.p.coordinate_to_number(8, 8)
-        r2,_ = self.p.generate_neighbors(8, 9)
+        r2, _ = self.p.generate_neighbors(8, 9)
 
         self.assertIn(a1, r2, 'a1 did not find neighbor')
 
     def test_find_neighbor_7_2(self):
         """should return number of neighbors for the item"""
         a1 = self.p.coordinate_to_number(8, 2)
-        a2 = self.p.coordinate_to_number(9, 2)
+        # a2 = self.p.coordinate_to_number(9, 2)
         a3 = self.p.coordinate_to_number(6, 3)
-        r2,_ = self.p.generate_neighbors(7, 2)
+        r2, _ = self.p.generate_neighbors(7, 2)
 
         self.assertIn(a1, r2, 'a1 did not find neighbor')
-        #self.assertIn(a2, r2, 'a2 did not find neighbor')
+        # self.assertIn(a2, r2, 'a2 did not find neighbor')
         self.assertNotIn(a3, r2, 'a3 FOUND and should not be neighbor')
-        #print(r2)
+        # print(r2)
 
 
 class m2_part_4(unittest.TestCase):
@@ -132,17 +135,17 @@ class m2_part_4(unittest.TestCase):
         self.contents = self.p.load_file(self.file_name)
         self.land_cell_list = self.p.find_land_cells()
 
-#     0    1    2    3    4    5    6    7    8    9
-# 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
-# 1 ['0', '1', '1', '0', '0', '0', '1', '0', '0', '0']
-# 2 ['0', '0', '0', '0', '0', '0', '1', '0', '0', '0']
-# 3 ['0', '0', '0', '1', '1', '0', '1', '0', '0', '0']
-# 4 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
-# 5 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
-# 6 ['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
-# 7 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
-# 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
-# 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+    def test_explore_island_1(self):
+        expected = sorted([43, 33, 34, 63, 53, 64])
+        t1 = self.p.coordinate_to_number(4, 3)
+        rv = self.p.explore_island(t1)
+        self.assertIsNotNone(rv)
+        # print(rv)
+        self.assertListEqual(sorted(rv), expected, 'explore island difference')
+        # for i in rv:
+        #     print(i)
+        #     x, y = self.p.number_to_coordinate(i)
+        #     print('\n [{}, {}]'.format(x, y))
 
     def test_explore_island_2(self):
         expected = sorted([72, 82, 92])
@@ -156,18 +159,43 @@ class m2_part_4(unittest.TestCase):
         #     x, y = self.p.number_to_coordinate(i)
         #     print('\n [{}, {}]'.format(x, y))
 
-    def test_explore_island_1(self):
-        expected = sorted([43, 33, 34, 63, 53, 64])
-        t1 = self.p.coordinate_to_number(4, 3)
-        rv = self.p.explore_island(t1)
-        self.assertIsNotNone(rv)
-        # print(rv)
-        self.assertListEqual(sorted(rv), expected, 'explore island difference')
-        # for i in rv:
-        #     print(i)
-        #     x, y = self.p.number_to_coordinate(i)
-        #     print('\n [{}, {}]'.format(x, y))
-        
 
+class m2_part_5(unittest.TestCase):
+    def setUp(self):
+        m, n = 3, 3
+        self.p = IslandProject(m, n)
+        cur_dir = pathlib.Path(__file__).parent.absolute()
+        self.file_name = os.path.join(cur_dir, 'shawn-cicoria_3x3.txt')
+        self.contents = self.p.load_file(self.file_name)
+
+        m, n = 10, 10
+        self.p2 = IslandProject(m, n)
+        self.file_name2 = os.path.join(cur_dir, 'shawn-cicoria.txt')
+        self.contents2 = self.p2.load_file(self.file_name2)
+
+#     0    1    2    3    4    5    6    7    8    9
+# 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+# 1 ['0', '1', '1', '0', '0', '0', '1', '0', '0', '0']
+# 2 ['0', '0', '0', '0', '0', '0', '1', '0', '0', '0']
+# 3 ['0', '0', '0', '1', '1', '0', '1', '0', '0', '0']
+# 4 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 5 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 6 ['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
+# 7 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+# 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
+# 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+
+    def test_find_islands_1(self):
+        exp = [[4, 5]]
+        islands = self.p.find_islands()
+        #print(islands)
+        self.assertListEqual(exp, islands)
+
+    def test_find_islands_10(self):
+        exp = [[11, 12], [16, 26, 36], [33, 34, 43, 53, 63, 64], [72, 82, 92], [87, 88, 89]]
+        islands = self.p2.find_islands()
+        #print(islands)
+        self.assertListEqual(exp, islands)
+    
 if __name__ == '__main__':
     unittest.main(verbosity=1)

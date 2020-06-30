@@ -1,7 +1,0 @@
-{
-  "python.pythonPath": "/Users/cicorias/g/njit/njit-alg-scratch/.venv/bin/python",
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.linting.enabled": true,
-  "python.testing.unittestEnabled" :true
-}
