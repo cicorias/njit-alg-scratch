@@ -21,6 +21,18 @@
 # that one has to traverse to go from t1 to t2. (Hint: Use function
 # NumberToCoordinate for this)
 
+#     0    1    2    3    4    5    6    7    8    9
+# 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+# 1 ['0', '1', '1', '0', '0', '0', '1', '0', '0', '0']
+# 2 ['0', '0', '0', '0', '0', '0', '1', '0', '0', '0']
+# 3 ['0', '0', '0', '1', '1', '0', '1', '0', '0', '0']
+# 4 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 5 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
+# 6 ['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
+# 7 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+# 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
+# 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
+
 class IslandProject():
 
     def __init__(self, m, n):
@@ -70,27 +82,24 @@ class IslandProject():
         rv = abs(i1 - i2) + abs(j1 - j2)
         return rv
 
-    #     0    1    2    3    4    5    6    7    8    9
-    # 0 ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
-    # 1 ['0', '1', '1', '0', '0', '0', '1', '0', '0', '0']
-    # 2 ['0', '0', '0', '0', '0', '0', '1', '0', '0', '0']
-    # 3 ['0', '0', '0', '1', '1', '0', '1', '0', '0', '0']
-    # 4 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
-    # 5 ['0', '0', '0', '1', '0', '0', '0', '0', '0', '0']
-    # 6 ['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
-    # 7 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
-    # 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
-    # 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
-
-    def generate_neighbors(self, x, y):
+    def generate_neighbors(self, x, y) -> list:
         """should return number of neighbors for the item"""
         """ can be 0, 2, 3, 4 """
         result = []
         # this 'mess' finds the items on outside of the x,y
-        for r, c in [(x + i, y + j)
-                     for i in (-1, 0, 1)  # rows over/under
+        for r, c in [(x, y + j)
+                     # for i in (-1, 0, 1)  # rows over/under
                      for j in (-1, 0, 1)  # cols left/right
-                     if i != 0 or j != 0]:  # all but THIS cell
+                     if j != 0]:
+
+            if [r, c] in self.land_cell_list:
+                rv = self.coordinate_to_number(r, c)
+                result.append(rv)
+
+        for r, c in [(x + i, y)
+                     for i in (-1, 0, 1)  # rows over/under
+                     # for j in (-1, 0, 1)  # cols left/right
+                     if i != 0]:
 
             if [r, c] in self.land_cell_list:
                 rv = self.coordinate_to_number(r, c)
@@ -98,10 +107,40 @@ class IslandProject():
 
         return result
 
-    def explore_island(self, t1):
-        result = []
+    def explore_island(self, t1) -> list:
+        result = [t1]
+        x, y = self.number_to_coordinate(t1)
+        a = self.generate_neighbors(x, y)
+        result = result + a
+        for n in a:
+            r, c = self.number_to_coordinate(n)
+            nl = self.generate_neighbors(r, c)
+            for z in nl:
+                if z not in result:
+                    result.append(z)
 
         return result
+
+    def explore_island_(self, t1) -> list:
+        result = {}
+        x, y = self.number_to_coordinate(t1)
+        result[t1] = [x, y]
+        
+        for n in self.generate_neighbors(x, y):
+            r, c = self.number_to_coordinate(n)
+            self.foo(result, n)
+            # result[n] = [r, c]
+            # sub = self.explore_island(n)
+            # result = sub # {**result, **sub}
+
+        return result
+
+    def foo_(self, n, L: dict):
+        x, y = self.number_to_coordinate(n)
+        for n2 in self.generate_neighbors(x, y):
+            if n2 not in L:
+                r, c = self.number_to_coordinate(n2)
+                L[n2] = r, c
 
 
 if __name__ == '__main__':

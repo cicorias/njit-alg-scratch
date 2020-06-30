@@ -110,6 +110,18 @@ class m2_part_1(unittest.TestCase):
 
         self.assertIn(a1, r2, 'a1 did not find neighbor')
 
+    def test_find_neighbor_7_2(self):
+        """should return number of neighbors for the item"""
+        a1 = self.p.coordinate_to_number(8, 2)
+        a2 = self.p.coordinate_to_number(9, 2)
+        a3 = self.p.coordinate_to_number(6, 3)
+        r2 = self.p.generate_neighbors(7, 2)
+
+        self.assertIn(a1, r2, 'a1 did not find neighbor')
+        #self.assertIn(a2, r2, 'a2 did not find neighbor')
+        self.assertNotIn(a3, r2, 'a3 FOUND and should not be neighbor')
+        print(r2)
+
 
 class m2_part_4(unittest.TestCase):
     def setUp(self):
@@ -132,14 +144,27 @@ class m2_part_4(unittest.TestCase):
 # 8 ['0', '0', '1', '0', '0', '0', '0', '1', '1', '1']
 # 9 ['0', '0', '1', '0', '0', '0', '0', '0', '0', '0']
 
-    def test_explore_island_1(self):
-        t1 = self.p.coordinate_to_number(1, 1)
-
-        r2 = self.p.generate_neighbors(1, 1)
-        self.assertEqual(len(r2), 1)
-
+    def test_explore_island_2(self):
+        expected = sorted([53, 63, 64, 72, 82, 92])
+        t1 = self.p.coordinate_to_number(7, 2)
         rv = self.p.explore_island(t1)
         self.assertIsNotNone(rv)
+        self.assertListEqual(sorted(rv), expected, 'explore island difference')
+        for i in rv:
+            print(i)
+            x, y = self.p.number_to_coordinate(i)
+            print('\n [{}, {}]'.format(x, y))
+
+    def test_explore_island_1(self):
+        expected = sorted([43, 33, 34, 63, 53, 64])
+        t1 = self.p.coordinate_to_number(4, 3)
+        rv = self.p.explore_island(t1)
+        self.assertIsNotNone(rv)
+        self.assertListEqual(sorted(rv), expected, 'explore island difference')
+        for i in rv:
+            print(i)
+            x, y = self.p.number_to_coordinate(i)
+            print('\n [{}, {}]'.format(x, y))
         
 
 if __name__ == '__main__':
