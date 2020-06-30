@@ -88,7 +88,6 @@ class IslandProject():
         result = []
         # this 'mess' finds the items on outside of the x,y
         for r, c in [(x, y + j)
-                     # for i in (-1, 0, 1)  # rows over/under
                      for j in (-1, 0, 1)  # cols left/right
                      if j != 0]:
 
@@ -98,7 +97,6 @@ class IslandProject():
 
         for r, c in [(x + i, y)
                      for i in (-1, 0, 1)  # rows over/under
-                     # for j in (-1, 0, 1)  # cols left/right
                      if i != 0]:
 
             if [r, c] in self.land_cell_list:
