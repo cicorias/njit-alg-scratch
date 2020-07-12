@@ -3,6 +3,7 @@
 
 import unittest
 
+#  TODO: weight and compression additions
 
 class UnionFind():
     def __init__(self, N):
