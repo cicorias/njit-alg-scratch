@@ -8,15 +8,28 @@ import unittest
 class UnionFind():
     def __init__(self, N):
         self._id = list(range(N))
+        self._sz = [1] * N  # size in num of node children
 
     def find(self, p: int, q: int) -> bool:
-        return self._id[p] == self._id[q]
+        # return self._id[p] == self._id[q]
+        return self.root(p) == self.root(q)
+
+    def root(self, i: int) -> int:
+        while i != self._id[i]:
+            self._id[i] = self._id[self._id[i]]
+            i = self._id[i]
+        return i
 
     def unite(self, p: int, q: int):
-        pid = self._id[p]
-        for i in range(len(self._id)):
-            if self._id[i] == pid:
-                self._id[i] = self._id[q]
+        i = self.root(p)
+        j = self.root(q)
+        self._id[i] = j
+        if self._sz[i] < self._sz[j]:
+            self._id[i] = j
+            self._sz[j] += self._sz[i]
+        else:
+            self._id[j] = i
+            self._sz[i] += self._sz[j]
 
 
 class basic_tests(unittest.TestCase):
@@ -31,19 +44,31 @@ class basic_tests(unittest.TestCase):
         self.assertEqual(uf.find(5, 5), True)
         self.assertEqual(uf.find(5, 4), False)
 
-    def test_unite_1(self):
+    def test_root_1(self):
         uf = UnionFind(10)
-        uf._id = [0, 1, 9, 9, 9, 6, 6, 7, 8, 9]
+        iv = [0, 0, 0, 1, 1, 1, 3, 3, 6, 6]
+        exp = [0, 0, 0, 0, 1, 1, 0, 3, 6, 0]
 
-        exp = [0, 1, 6, 6, 6, 6, 6, 7, 8, 6]
+        uf._id = iv
 
         self.assertEqual(len(uf._id), 10)
         self.assertEqual(len(exp), 10)
 
-        uf.unite(3, 6)
-
+        #  uf.unite(9, 4)
+        rv = uf.root(9)
+        self.assertEqual(rv, 0, 'root not match')
         self.assertListEqual(exp, uf._id)
 
+    def test_unite_1(self):
+        iv = [0, 1, 2, 3, 3, 5, 6, 7, 8, 9]
+        exp = [0, 1, 2, 3, 3, 5, 6, 7, 8, 3]
+
+        uf = UnionFind(10)
+        uf._id = iv
+
+        uf.unite(4, 9)
+
+        self.assertListEqual(uf._id, exp)
 
 #  Implement a function randperm that takes as input a number  n,
 #  and returns a random permutation of the numbers 0...n-1.
