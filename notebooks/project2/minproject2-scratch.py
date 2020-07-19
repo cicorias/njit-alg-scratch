@@ -15,8 +15,8 @@ def import_data(filename, skip_header = False, sep = ',', cols = 2):
 
     return rv
 
-edges = import_data('./data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
-print(len(edges))  # result is 88234
+edges_facebook = import_data('./data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
+print(len(edges_facebook))  # result is 88234
 
 # importing GitHub graph data
 edges_github = import_data('./data/git_web_ml/musae_git_edges.csv', skip_header=True, sep=',', cols=2)
@@ -30,10 +30,11 @@ print(len(edges_btc))
 a = [[1, 2], [1, 2], [1, 2], [2, 1]]
 
 def node_frequency(G, directed=False):
+    '''attempt with numpy'''
     import numpy as np
     if not directed:  # undirected
         #  this flips the orig and concatenates it again
-        a_all = np.concatenate((G, np.flip(G, axis=0)))
+        a_all = np.concatenate((G, np.flip(G, axis=1)))
     else:
         a_all = G
 
@@ -43,28 +44,38 @@ def node_frequency(G, directed=False):
     return frequencies
 
 def node_freq(G, directed=False):
+    '''faster implementation'''
     rv = {}
     for r in G:
-        if not r[1] in rv:
-            rv[r[1]] = 1
+        if not directed:
+            if not r[0] in rv:
+                rv[r[0]] = 1
+            else:
+                rv[r[0]] += 1
+            if not r[1] in rv:
+                rv[r[1]] = 1
+            else:
+                rv[r[1]] += 1
         else:
-            rv[r[1]] += 1
-        
-        if not r[0] in rv:
-            rv[r[0]] = 1
-        else:
-            rv[r[0]] += 1
-        
-    return rv
+            if not r[1] in rv:
+                rv[r[1]] = 1
+            else:
+                rv[r[1]] += 1
 
-rv = node_frequency(a)
-rrv = node_frequency(a, directed=True)
+    #  return rv
+    return list(rv.items())  # list of tuples
 
-rv2 = node_freq(a)
-rrv2 = node_freq(a, directed=True)
+def node_top(G, count=100):
+    return sorted(
+        node_freq(G),
+        key = lambda x: x[1], reverse=True)[0:100]
 
 
+# %% [markdown]
+# The following gives the top 100
 # %%
-
+fb_100 = node_top(edges_facebook)
+gh_100 = node_top(edges_github)
+btc_100 = node_top(edges_btc)
 
 # %%
