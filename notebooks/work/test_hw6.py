@@ -275,7 +275,41 @@ def print_bst(node: Node):
 # Write a function *BST_max* that takes as input a BST and returns the maximum key in it. This function should be iterative.
 
 # %%
-# def BST_max(T):
+def BST_max(T: Node) -> int:
+    current_max = -2**10000  # huge negative.
+    current_node: Node = None
+    T_orig = T
+    
+    while T.key != current_node:
+        if current_node is None or T.key > current_node.key:
+            if T.rchild is None:
+                break
+            else:
+                # current_max = T.key
+                current_node = T
+                T = T.rchild  # = T
+
+        # else:
+        #     if T.kchild is None:
+        #         break
+        #     else:
+        #         current_node = T
+        #         T = T.kchild  # = T
+
+    return T.key
+
+class test_find_max_key(unittest.TestCase):
+    def setUp(self):
+        self.arr_1 = [1, 2, 3, 4, 5, 6, 7]
+        self.nodes = NodeCollection()
+        self.all = self.nodes.all_nodes
+        self.arr = list([i.key for i in sorted(self.all, key=lambda x: x.key)])
+
+    def test_one(self):
+        act = BST_max(self.all[6])
+
+        self.assertEqual(4, act, 'bst max')
+
 
 # %% [markdown]
 # ---
