@@ -17,6 +17,7 @@
 # %%
 # your implementation goes here
 
+from typing import Tuple
 import unittest
 
 class Node:
@@ -311,43 +312,55 @@ class RBNode:
         self.key = key
         self.lchild = None
         self.rchild = None
-        if color is not None:
+        if color is None:
             self.color = 1  # black 0 = Red
+        else:
+            self.color = color
 
 
-def checkRBValidity(T: Node):
+def checkRBValidity(T: RBNode):
     '''BST rules:
     - every node has at MOST 2 children
     - a node's left child is <= self(parent)
     - a node's right child is >= self(parent)
-    RB rules
-    - root is black
-    - leaves are black
-    - parent of red node is black
-    - height of x to leaf is always same n black nodes
+    RB rules:
+    - root is black; leaves are black
+    - red parent is black
+    - black depth always the same
     '''
+    root = T
+    # base case..
+    if root.color != 1:
+        return False, 0
 
-    if T is None:  # leaf
-        return True
+    rv, depth = rb_validity_helper(root.rchild)
+    return rv, depth
 
-    if T.lchild is None and T.rchild is None:
-        return True
+def rb_validity_helper(T: RBNode):
+    '''return bool and black depth'''
+    if not T:
+        return True, 1
 
-    if T.lchild is not None and T.lchild.key <= T.key:
-        #  venture down
-        if checkBSTValidity(T.lchild) and T.rchild is None:
-            return True
+    if T.color != 1:  # if not black...
+        black_count = 0
+        if (T.lchild is not None and T.lchild.color == 0):  # must be black.
+            return False, -1
+    else:
+        black_count = 1
 
-        return True
+    # normal BST checks.
+    # - a node's left child is <= self(parent)
+    # - a node's right child is >= self(parent)
+    if T.lchild is not None and T.lchild.key > T.key:
+        return False, -1
 
-    if T.rchild is not None and T.rchild.key >= T.key:
-        #  venture down.
-        if checkBSTValidity(T.rchild) and T.lchild is None:
-            return True
+    if T.rchild is not None and T.rchild.key < T.key:
+        return False, -1
 
-        return True
+    r, black_count_r = rb_validity_helper(T.rchild)
+    l, black_count_l = rb_validity_helper(T.lchild)
 
-    return False
+    return all([r, l, black_count_r == black_count_l]), black_count_r + black_count
 
 
 def create_RB_bst():
@@ -368,7 +381,10 @@ class test_RB_BST(unittest.TestCase):
 
     def test_exist(self):
         self.assertIsNotNone(self.tree)
-        self.assertTrue(checkRBValidity(self.tree))
+        rv, depth = checkRBValidity(self.tree)
+
+        self.assertTrue(rv)
+        self.assertEqual(2, depth)
     
 
 
