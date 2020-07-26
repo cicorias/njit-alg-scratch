@@ -51,8 +51,7 @@ def checkBSTValidity(T: Node) -> bool:
     return False
 
 
-
-# '''
+#  '''
 #         5
 #        / \
 #       /   \
@@ -62,20 +61,19 @@ def checkBSTValidity(T: Node) -> bool:
 #   2   4   7   10
 #  /               \
 # 1                12
-# '''
+#  '''
 
-
-class test_bst_validity(unittest.TestCase):
-    def setUp(self):
-        self.n5 = Node(5)
-        self.n3 = Node(3)
-        self.n2 = Node(2)
-        self.n1 = Node(1)
-        self.n4 = Node(4)
-        self.n8 = Node(8)
-        self.n7 = Node(7)
-        self.n10 = Node(10)
-        self.n12 = Node(12)
+class NodeCollection:
+    def __init__(self):
+        self.n5 = Node('5')
+        self.n3 = Node('3')
+        self.n2 = Node('2')
+        self.n1 = Node('1')
+        self.n4 = Node('4')
+        self.n8 = Node('8')
+        self.n7 = Node('7')
+        self.n10 = Node('10')
+        self.n12 = Node('12')
 
         self.n5.lchild = self.n3
         self.n5.rchild = self.n8
@@ -88,25 +86,19 @@ class test_bst_validity(unittest.TestCase):
 
         self.all = [self.n1, self.n2, self.n3, self.n4, self.n5, self.n7, self.n8, self.n10, self.n12]
 
-    def test_single_node(self):
-        self.assertTrue(checkBSTValidity(self.n12), 'single node no children')
-        self.assertTrue(checkBSTValidity(self.n4), 'single node no children')
+    @property
+    def all_nodes(self):
+        return self.all
 
-    def test_left_only(self):
-        self.assertTrue(checkBSTValidity(self.n2))
 
-    def test_nested(self):
-        self.assertTrue(checkBSTValidity(self.n3))
-        self.assertTrue(checkBSTValidity(self.n8))
-
-    def test_root(self):
-        self.assertTrue(checkBSTValidity(self.n5))
+class test_bst_validity(unittest.TestCase):
+    def setUp(self):
+        self.nodes = NodeCollection()
+        self.all = self.nodes.all_nodes
 
     def test_all(self):
         for n in self.all:
-            print(n.key)
             self.assertTrue(checkBSTValidity(n), 'failed node in {}'.format(n.key))
-
 
 
 # %% [markdown]
@@ -122,7 +114,51 @@ class test_bst_validity(unittest.TestCase):
 # %%
 # your implementation goes here
 
-# def BT_Height(T):
+def BT_Height(T, h=None) -> int:
+    if h is None:
+        h = 1  # make this 1 if we want to count root as a level????
+    else:
+        h += 1
+
+    if T.lchild is None and T.rchild is None:
+        return h
+
+    rv = 0
+    if T.lchild is not None:
+        #  venture down
+        rv = BT_Height(T.lchild, h)
+
+    if T.rchild is not None:
+        #  venture down.
+        rv = max(rv, BT_Height(T.rchild, h))
+
+    return rv
+
+class test_bst_height(unittest.TestCase):
+    def setUp(self):
+        self.nodes = NodeCollection()
+        self.all = self.nodes.all_nodes
+
+    def test_height_n5(self):
+        exp = 4
+        act = BT_Height(self.all[4])  # the root 5
+        print('key is {}'.format(self.all[4].key))
+        self.assertEqual(exp, act, 'height from root')
+
+    def test_height_n8(self):
+        exp = 3
+        act = BT_Height(self.all[6])  # node 8
+        print('key is {}'.format(self.all[6].key))
+
+        self.assertEqual(exp, act, 'height from root')
+
+    def test_log2height(self):
+        import math
+        n = len(self.all)
+        exp = math.ceil(math.log2(n))
+        act = BT_Height(self.all[4])  # the root 5
+        self.assertEqual(exp, act, 'log and height')
+
 
 # %% [markdown]
 # ---
@@ -136,7 +172,29 @@ class test_bst_validity(unittest.TestCase):
 # your code goes here
 
 
-# def BT_ClosestLeaf(T):
+def BT_ClosestLeaf(T: Node) -> Node:
+    #  Base Case
+    if T is None:
+        return 2**10000
+    if T.lchild is None and T.rchild is None:
+        return 0
+
+    #  get the min between two downward paths.
+    return 1 + min(BT_ClosestLeaf(T.lchild),
+                   BT_ClosestLeaf(T.rchild))
+
+
+class test_root_closest_leaf(unittest.TestCase):
+    def setUp(self):
+        self.nodes = NodeCollection()
+        self.all = self.nodes.all_nodes
+
+    def test_root(self):
+        exp = 3
+        act = BT_ClosestLeaf(self.all[4])  # the root 5
+        self.assertEqual(exp, act, 'height from root')
+
+
 
 # %% [markdown]
 # ---
