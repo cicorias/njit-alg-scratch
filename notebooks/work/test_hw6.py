@@ -391,3 +391,6 @@ class test_RB_BST(unittest.TestCase):
 # %%
 if __name__ == '__main__':
     unittest.main(verbosity=1)
+
+
+# %%
