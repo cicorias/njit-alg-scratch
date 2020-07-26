@@ -25,6 +25,10 @@ class Node:
         self.lchild = None
         self.rchild = None
 
+    # @property
+    # def key(self):
+    #     return self.key
+
 def checkBSTValidity(T: Node) -> bool:
     '''BST rules:
     - every node has at MOST 2 children
@@ -180,8 +184,11 @@ def BT_ClosestLeaf(T: Node) -> Node:
         return 0
 
     #  get the min between two downward paths.
-    return 1 + min(BT_ClosestLeaf(T.lchild),
-                   BT_ClosestLeaf(T.rchild))
+
+    rv = BT_ClosestLeaf(T.lchild)
+    rv = min(rv, BT_ClosestLeaf(T.rchild))
+
+    return 1 + rv
 
 
 class test_root_closest_leaf(unittest.TestCase):
@@ -190,10 +197,9 @@ class test_root_closest_leaf(unittest.TestCase):
         self.all = self.nodes.all_nodes
 
     def test_root(self):
-        exp = 3
+        exp = 2
         act = BT_ClosestLeaf(self.all[4])  # the root 5
-        self.assertEqual(exp, act, 'height from root')
-
+        self.assertEqual(exp, act, 'leaf distance')
 
 
 # %% [markdown]
@@ -205,10 +211,63 @@ class test_root_closest_leaf(unittest.TestCase):
 # In the lecture we briefly discussed that inserting keys in a random order, will give a balanced tree with high probability. However, it's likely that the tree will not be fully balanced. Suppose now that we have already a sorted array of elements $S$ and we want to convert it to a **fully** balanced search tree. Write a function that accomplishes that goal
 
 # %%
-# def sortedToBST(S)
+
+#  output should be a Tree.
+def sortedToBST(S: list) -> Node:
+    ''' I swear we did this before... '''
+    if not S:
+        return None
+
+    #  get the midpoint as an int
+    mid = (len(S)) // 2
+
+    #  mid point is a root candidate.
+    root = Node(S[mid])
+
+    #  build out the left which are lt
+    root.lchild = sortedToBST(S[:mid])
+
+    #  build out the right which are gt
+    root.rchild = sortedToBST(S[mid + 1:])
+
+    return root
 
 
-# output should be a Tree.
+class test_sorted_to_bst(unittest.TestCase):
+    def setUp(self):
+        self.arr_1 = [1, 2, 3, 4, 5, 6, 7]
+        self.nodes = NodeCollection()
+        self.all = self.nodes.all_nodes
+        self.arr = list([i.key for i in sorted(self.all, key=lambda x: x.key)])
+
+#     4
+#    / \
+#   /   \
+#  2     6
+# / \   / \
+# 1 3  5   7
+
+    def test_one(self):
+        act = sortedToBST(self.arr_1)
+        rv = checkBSTValidity(act)
+        print_bst(act)
+        self.assertTrue(rv)
+        self.assertEqual(3, BT_Height(act), 'height')
+
+    def test_two(self):
+        act = sortedToBST(self.arr)
+        rv = checkBSTValidity(act)
+        print_bst(act)
+        self.assertTrue(rv)
+        self.assertEqual(4, BT_Height(act), 'height')
+
+def print_bst(node: Node):
+    if not node:
+        return
+
+    print(node.key),
+    print_bst(node.lchild)
+    print_bst(node.rchild)
 
 # %% [markdown]
 # ---
