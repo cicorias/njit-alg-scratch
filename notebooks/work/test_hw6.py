@@ -292,7 +292,7 @@ class test_find_max_key(unittest.TestCase):
     def test_one(self):
         act = BST_max(self.all[6])
 
-        self.assertEqual(12, act, 'bst max')
+        self.assertEqual('12', act, 'bst max')
 
 
 # %% [markdown]
@@ -307,13 +307,69 @@ class test_find_max_key(unittest.TestCase):
 
 # %%
 class RBNode:
-    def __init__(self, key):
+    def __init__(self, key, color=None):
         self.key = key
         self.lchild = None
         self.rchild = None
-        self.color = 1
+        if color is not None:
+            self.color = 1  # black 0 = Red
 
-# def checkRBValidity(T)
+
+def checkRBValidity(T: Node):
+    '''BST rules:
+    - every node has at MOST 2 children
+    - a node's left child is <= self(parent)
+    - a node's right child is >= self(parent)
+    RB rules
+    - root is black
+    - leaves are black
+    - parent of red node is black
+    - height of x to leaf is always same n black nodes
+    '''
+
+    if T is None:  # leaf
+        return True
+
+    if T.lchild is None and T.rchild is None:
+        return True
+
+    if T.lchild is not None and T.lchild.key <= T.key:
+        #  venture down
+        if checkBSTValidity(T.lchild) and T.rchild is None:
+            return True
+
+        return True
+
+    if T.rchild is not None and T.rchild.key >= T.key:
+        #  venture down.
+        if checkBSTValidity(T.rchild) and T.lchild is None:
+            return True
+
+        return True
+
+    return False
+
+
+def create_RB_bst():
+    root = RBNode(7, color=1)
+    root.lchild = RBNode(3, 1)
+    root.rchild = RBNode(18, 0)
+    root.rchild.lchild = RBNode(10, 1)
+    root.rchild.rchild = RBNode(22, 1)
+    root.rchild.lchild.lchild = RBNode(8, 0)
+    root.rchild.lchild.rchild = RBNode(11, 0)
+    root.rchild.rchild.rchild = RBNode(26, 0)
+
+    return root
+
+class test_RB_BST(unittest.TestCase):
+    def setUp(self):
+        self.tree = create_RB_bst()
+
+    def test_exist(self):
+        self.assertIsNotNone(self.tree)
+        self.assertTrue(checkRBValidity(self.tree))
+    
 
 
 # %%
