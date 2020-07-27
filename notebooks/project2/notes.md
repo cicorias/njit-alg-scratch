@@ -23,3 +23,9 @@ following seems to follow teacher
 ### https://gist.github.com/JeremieGomez/74de2d3e1268c48e63a3
 
 http://www.kylesauri.com/home/kosarajus-algorithm-in-python-3
+
+
+https://searchcode.com/codesearch/view/32019801/
+
+THIS IS THE ONE:
+https://bitbucket.org/vivekn/an-algo-a-day/raw/0f3b212d2b7c2ac1d86fff6f078d4cd09e42b06a/kosaraju.py
