@@ -2,6 +2,7 @@
   "python.analysis.autoSearchPaths": true,
   "python.analysis.extraPaths": [
     "./notebooks/project",
+    "./notebooks/project2",
     "./notebooks/work"
   ],
   "python.linting.pylintEnabled": false,
@@ -14,7 +15,7 @@
   "python.testing.unittestArgs": [
     "-v",
     "-s",
-    "./notebooks/work",
+    "./notebooks/project2",
     "-p",
     "test_*.py"
   ],
