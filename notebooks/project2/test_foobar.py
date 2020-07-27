@@ -1,9 +1,6 @@
 # %%
+
 import unittest
-
-# from project2 import import_data
-
-# from project2 import import_data
 
 class connected_helper:
     def __init__(self, G: list = None):
@@ -14,7 +11,7 @@ class connected_helper:
 
     # Task 2
     def import_data(self, filename,
-                    skip_header = False, 
+                    skip_header = False,
                     sep = ',',
                     cols = 2) -> list:
         rv = []
@@ -87,9 +84,56 @@ class connected_helper:
         for edge in self.G:  # this is an edge (from,to)
             for node in edge:  # each node
                 cc[int(node)] += 1
-    
+
         self.connected_counts_alt = cc
         return cc
+
+    # Task 4 implemeentation -- proper one
+    #  returns an array where offset is the ID and each
+    # element is the connected nodes as a sublist.
+    def get_connected_nodes(self, directed=False) -> list:
+        cc = [None] * (self.max_id + 1)
+        visited = [False] * (self.max_id + 1)
+        counts = [0] * (self.max_id + 1)
+
+        for edge in self.G:  # edge of (from,to)
+            node_from = edge[0]
+            node_to = edge[1]
+
+            if not visited[int(node_from)]:
+                cc[int(node_from)] = [node_to]
+                visited[int(node_from)] = True
+                #  counts[int(node_from)] = 1
+            else:
+                cc[int(node_from)] = cc[int(node_from)] + [node_to]
+
+            counts[int(node_from)] += 1
+
+            if not directed:
+                if not visited[int(node_to)]:
+                    cc[int(node_to)] = [node_from]
+                    visited[int(node_to)] = True
+                    #  counts[int(node_to)] = 1
+                else:
+                    cc[int(node_to)] = cc[int(node_to)] + [node_from]
+
+                counts[int(node_to)] += 1
+
+        self.connected_nodes = cc
+        self.connected_counts = counts
+        return cc
+
+    def get_largest_node_degree(self):
+        if self.G is None:
+            raise 'Must iomport data first'
+
+        _ = self.get_connected_nodes()
+        max_index = self.connected_counts.index(max(self.connected_counts))
+
+        return max_index, self.connected_nodes[max_index]
+
+    #  def dfs_util(self, node, visited):
+    #     visited[int(node)
 
     # Task 4 alternative method but an adjacency list as dict.
     def get_connected_counts_alt(self):
@@ -101,52 +145,52 @@ class connected_helper:
         # this alleviates need to pre-alloc an array of n items
         # and discovering the ID's of all the unique nodes.
         mysum = defaultdict(int)
-        for start, end in edges:
+        for start, end in self.G:
             # adj_list[start][end] += 1
             mysum[start] += 1
             mysum[end] += 1
 
-        self.connected_counts_alt = mysum
+        self.connected_counts_alt2 = mysum
         return mysum
 
 
-s_fb = connected_helper()
-edges_facebook = s_fb.import_data('./data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
-print(len(edges_facebook))  # result is 88234
-
-# importing GitHub graph data
-s_gh = connected_helper()
-edges_github = s_gh.import_data('./data/git_web_ml/musae_git_edges.csv', skip_header=True, sep=',', cols=2)
-print(len(edges_github))
-
-# import btc data
-s_btc = connected_helper()
-edges_btc = s_btc.import_data('./data/soc-sign-bitcoinotc.csv', skip_header=False, sep=',', cols=3)
-print(len(edges_btc))
-
-a = [[1, 2], [1, 2], [1, 2], [2, 1]]
-
-# The following gives the top 100
-fb_100 = s_fb.node_top(edges_facebook)
-gh_100 = s_gh.node_top(edges_github)
-btc_100 = s_btc.node_top(edges_btc)
-
-
-s = connected_helper()
-
-edges = s.import_data('./data/sample.txt')
-# edges = [('a', 'b'), ('b', 'a'), ('a', 'c')]
-
-print(s.get_connected_counts())
-s.get_connected_counts_alt()
-
 # %%
 
+class test_one(unittest.TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def test_one(self):
+        arr = [['0', '2'], ['0', '3'], ['1', '1']]
+        s = connected_helper(G=arr)
+        s.max_id = 3
+        cn = s.get_connected_nodes()
+
+        self.assertIsNotNone(cn)
+
+    def test_with_fb(self):
+        s_fb = connected_helper()
+        s_fb.import_data('notebooks/project2/data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
+        cn = s_fb.get_connected_nodes()
+        cn_2 = s_fb.get_connected_counts()
+        self.assertIsNotNone(cn)
+        self.assertListEqual(cn_2, s_fb.connected_counts_alt, 'two connected counts')
+
+    def test_larget_node(self):
+        s_fb = connected_helper()
+        s_fb.import_data('notebooks/project2/data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
+        index, con_nodes = s_fb.get_largest_node_degree()
+
+        print('larget node has {}'.format(len(con_nodes)))
+
+        self.assertIsNotNone(con_nodes)
+        self.assertEqual(1045, len(con_nodes), 'length of connections')
+        self.assertEqual(107, index, 'index of larget node')
+        self.assertEqual(s_fb.connected_counts[107], len(con_nodes))
 
 
 
 
-
-
+        
 
 # %%
