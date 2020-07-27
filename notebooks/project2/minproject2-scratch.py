@@ -30,7 +30,8 @@ print(len(edges_btc))
 a = [[1, 2], [1, 2], [1, 2], [2, 1]]
 
 def node_frequency(G, directed=False):
-    '''attempt with numpy'''
+    '''attempt with numpy
+    this is NOT used....'''
     import numpy as np
     if not directed:  # undirected
         #  this flips the orig and concatenates it again
@@ -77,5 +78,14 @@ def node_top(G, count=100):
 fb_100 = node_top(edges_facebook)
 gh_100 = node_top(edges_github)
 btc_100 = node_top(edges_btc)
+
+
+# %% [markdown]
+#  https://www.geeksforgeeks.org/program-to-count-number-of-connected-components-in-an-undirected-graph/?ref=rp
+#  https://www.python-course.eu/graphs_python.php
+#  https://algs4.cs.princeton.edu/42digraph/
+
+# strongly connected components:
+# https://www.geeksforgeeks.org/strongly-connected-components/
 
 # %%
