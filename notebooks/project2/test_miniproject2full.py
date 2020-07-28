@@ -1,8 +1,6 @@
 # %%
-
+import numpy as np
 import unittest
-
-from numpy.core.fromnumeric import transpose
 
 class connected_helper:
     def __init__(self, G: list = None):
@@ -24,6 +22,8 @@ class connected_helper:
                     continue
                 row = line.strip().split(sep)[0:cols]
                 self.max_id = max(self.max_id, int(row[0]), int(row[1]))  # needed later.
+                row[0] = int(row[0])
+                row[1] = int(row[1])
                 rv.append(row)
                 assert len(rv[len(rv) - 1]) == cols
 
@@ -173,7 +173,7 @@ class connected_helper:
 
         return self.R
 
-    def kosaraju(self, G=None):
+    def get_scc(self, G=None):
         # if a graph is already imported it is in the
         # [[1,2], [2,3]] format and needs to be connected component instead.
         if G is None:
@@ -197,6 +197,10 @@ class connected_helper:
                 while len(stack) > 0:
                     u = stack[-1]  # peek at last item.
                     done = True
+                    # tv = G[u]   # odd bug I can't id.
+                    if G[u] is None:
+                        break
+
                     for v in G[u]:
                         if transposed[v][0] is None:
                             transposed[v] = [u]
@@ -234,10 +238,86 @@ class connected_helper:
 
         return scc
 
+    # Task 6 - this i've taken from my HW5 submission.
+    def get_adj_matrix(self, data=None, directed=None):
+        if data is None:
+            data = self.G
+        if directed is None:
+            directed = False
+
+        data = np.array(data)
+        #  get the node list
+        nodes = np.unique(data)
+        n = len(nodes)
+        # create a dict
+        node_dict = {n: i for i, n in enumerate(nodes)}
+
+        # inverted to vector
+        numdata = np.vectorize(node_dict.get)(data)
+        am = np.zeros((n, n),)
+        for j, i in numdata:
+            am[j, i] = 1
+            if not directed:
+                am[i, j] = 1
+
+        return am.astype(int)
+
+    # Task 6
+    def get_number_paths(self, adj_matrix, source, target, k):
+        # give up if K is exhaused (zero or negative.)
+        if (k == 0 and source == target):
+            return 1
+        if (k <= 0):
+            return 0
+
+        n = len(adj_matrix)
+        steps = 0
+        # traverse the adj matrix
+        for i in range(n):
+            if (adj_matrix[source][i] == 1):  # have a connection.
+                # deduct step and recursive call; add to current steps.
+                steps += self.get_number_paths(adj_matrix, i, target, k - 1)
+
+        return steps
+
 
 class test_one(unittest.TestCase):
     def setUp(self) -> None:
         pass
+
+    def test_steps(self):
+        arr = [[0, 1], [1, 0], [1, 2], [2, 0], [2, 3], [2, 4], [3, 4], [4, 5], [5, 6], [6, 4], [7, 6]]
+        s = connected_helper(G=arr)
+        s.max_id = 7
+        adj = s.get_adj_matrix(directed=True)
+
+        act = s.get_number_paths(adj, 0, 1, 1)
+        self.assertEqual(1, act, 'path is 1')
+
+        act = s.get_number_paths(adj, 3, 4, 1)
+        self.assertEqual(1, act, 'path is 1')
+
+        act = s.get_number_paths(adj, 2, 4, 2)
+        self.assertEqual(1, act, 'path is 1')
+
+        act = s.get_number_paths(adj, 4, 5, 3)
+        self.assertEqual(0, act, 'path is 1')
+
+    def test_steps_two(self):
+        arr = [[0, 1], [0, 3], [0, 2], [1, 3], [2, 3]]
+        s = connected_helper(G=arr)
+        s.max_id = 3
+        adj = s.get_adj_matrix(directed=True)
+        act = s.get_number_paths(adj, 0, 3, 2)
+        self.assertEqual(2, act, 'path is 1')
+
+    def test_adj_matrix(self):
+        arr = [[0, 1], [1, 0], [1, 2], [2, 0], [2, 3], [2, 4], [3, 4], [4, 5], [5, 6], [6, 4], [7, 6]]
+        s = connected_helper(G=arr)
+        s.max_id = 7
+
+        act = s.get_adj_matrix(directed=True)
+        self.assertIsNotNone(act)
 
     def test_dfs_one(self):
         # arr = [[1, 2], [2, 3], [2, 5], [3, 4], [4, 6], [5, 1], [6, 3]]
@@ -246,11 +326,11 @@ class test_one(unittest.TestCase):
         s = connected_helper(G=arr)
         s.max_id = 7
 
-        act = s.kosaraju(arr)
+        act = s.get_scc(arr)
         exp = [0, 0, 0, 3, 4, 4, 4, 7]
         self.assertIsNotNone(act)
         self.assertListEqual(act, exp, 'alg done...')
-       
+
     def test_reverse(self):
         arr = [['0', '2'], ['0', '3'], ['1', '1']]
         exp = [['2', '0'], ['3', '0'], ['1', '1']]
@@ -288,8 +368,38 @@ class test_one(unittest.TestCase):
         self.assertEqual(s_fb.connected_counts[107], len(con_nodes))
 
 
+# %%
 
 
+s_fb = connected_helper()
+edges_facebook = s_fb.import_data('./data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
+print(len(edges_facebook))  # result is 88234
+
+fb_100 = s_fb.node_top(edges_facebook)
+
+s_fb.get_connected_nodes()[2]
+
+index, con_nodes = s_fb.get_largest_node_degree()
+print('index ID of largest FB: {} with {} total nodes'.format(index, len(con_nodes)))
+
+# %%
+
+rv = s_fb.get_scc()
+
+for i, v in enumerate(rv):
+    network = []
+    max_print = 10
+    ic = 0
+    if v == 329:
+        network.append([i,v])
+        if ic < max_print:
+            ic += 1
+            print('ID: {} is part of SCC: {}'.format(i,v))
+            print(ic)
+
+    
+
+# %%
 
 
 # %%
