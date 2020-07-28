@@ -2,6 +2,8 @@
 
 import unittest
 
+from numpy.core.fromnumeric import transpose
+
 class connected_helper:
     def __init__(self, G: list = None):
         if G is not None:
@@ -180,47 +182,57 @@ class connected_helper:
             G = self.get_connected_nodes(directed=True, graph=G)
 
         # this has to be interative as stack overflow on datasets with more than 500 edges.
-        # postorder DFS on G to transpose the graph and push root vertices to L
         n = len(G)
-        T = [None] * n  # [[] for _ in range(n)]
-        # T = [[] for _ in range(n)]
-        L = []
-        U = [False] * n
+        transposed = [[None]] * n
+        order_w = []
+        visited = [False] * n
+        scc = [None] * n
 
+        # transpose and first DFS with order by weight
         for u in range(n):
-            if not U[u]:
-                U[u], S = True, [u]
-                while S:
-                    u, done = S[-1], True
+            if not visited[u]:
+                visited[u] = True
+                stack = [u]
+
+                while len(stack) > 0:
+                    u = stack[-1]  # peek at last item.
+                    done = True
                     for v in G[u]:
-                        T[v].append(u)
-                        if not U[v]:
-                            U[v], done = True, False
-                            S.append(v)
+                        if transposed[v][0] is None:
+                            transposed[v] = [u]
+                        else:
+                            transposed[v].append(u)
+                        if not visited[v]:
+                            visited[v] = True
+                            done = False
+                            stack.append(v)
                             break
                     if done:
-                        S.pop()
-                        L.append(u)
+                        stack.pop()
+                        order_w.append(u)
 
-        # postorder DFS on T to pop root vertices from L and mark SCCs
-        C = [None] * n
-        while L:
-            r = L.pop()
-            S = [r]
-            if U[r]:
-                U[r], C[r] = False, r
-            while S:
-                u, done = S[-1], True
-                for v in T[u]:
-                    if U[v]:
-                        U[v] = done = False
-                        S.append(v)
-                        C[v] = r
-                        break
+        # second DFS on tranposed to build the scc array
+        while len(order_w) > 0:
+            r = order_w.pop()
+            stack = [r]
+            if visited[r]:
+                visited[r] = False
+                scc[r] = r
+            while len(stack) > 0:
+                u = stack[-1]
+                done = True
+                if transposed[u][0] is not None:
+                    for v in transposed[u]:
+                        if visited[v]:
+                            done = False
+                            visited[v] = False
+                            stack.append(v)
+                            scc[v] = r
+                            break
                 if done:
-                    S.pop()
+                    stack.pop()
 
-        return C
+        return scc
 
 
 class test_one(unittest.TestCase):
