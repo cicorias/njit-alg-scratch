@@ -29,3 +29,17 @@ https://searchcode.com/codesearch/view/32019801/
 
 THIS IS THE ONE:
 https://bitbucket.org/vivekn/an-algo-a-day/raw/0f3b212d2b7c2ac1d86fff6f078d4cd09e42b06a/kosaraju.py
+
+
+
+
+---
+#  https://www.geeksforgeeks.org/program-to-count-number-of-connected-components-in-an-undirected-graph/?ref=rp
+#  https://www.python-course.eu/graphs_python.php
+#  https://algs4.cs.princeton.edu/42digraph/
+
+# strongly connected components:
+# https://www.geeksforgeeks.org/strongly-connected-components/
+
+
+# https://www.geeksforgeeks.org/find-a-mother-vertex-in-a-graph/

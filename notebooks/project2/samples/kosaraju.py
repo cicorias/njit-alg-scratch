@@ -1,6 +1,7 @@
 """
 Kosaraju's algorithm for finding strongly connected components
 """
+# %%
 from collections import defaultdict
 
 def reverse(graph):
@@ -56,7 +57,7 @@ def main():
         u, v = line.strip().split()
         graph[u].append(v)
     sccs = kosaraju(graph).values()
-    print sorted(map(len, sccs))[::-1][:10]
+    print(sorted(map(len, sccs))[::-1][:10])
 
 
 def test():
@@ -68,7 +69,10 @@ def test():
         5: [1],
         6: [3]
     }
-    print kosaraju(graph)
+    print(kosaraju(graph))
 
 if __name__ == '__main__':
-    main()
+    test()  #  main()
+
+
+# %%

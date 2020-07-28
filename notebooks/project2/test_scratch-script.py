@@ -19,19 +19,3 @@ a = [[1, 2], [1, 2], [1, 2], [2, 1]]
 fb_100 = node_top(edges_facebook)
 gh_100 = node_top(edges_github)
 btc_100 = node_top(edges_btc)
-
-
-# %% [markdown]
-#  https://www.geeksforgeeks.org/program-to-count-number-of-connected-components-in-an-undirected-graph/?ref=rp
-#  https://www.python-course.eu/graphs_python.php
-#  https://algs4.cs.princeton.edu/42digraph/
-
-# strongly connected components:
-# https://www.geeksforgeeks.org/strongly-connected-components/
-
-
-# https://www.geeksforgeeks.org/find-a-mother-vertex-in-a-graph/
-
-
-# %%
-

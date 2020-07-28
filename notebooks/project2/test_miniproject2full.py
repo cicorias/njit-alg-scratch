@@ -91,12 +91,17 @@ class connected_helper:
     # Task 4 implemeentation -- proper one
     #  returns an array where offset is the ID and each
     # element is the connected nodes as a sublist.
-    def get_connected_nodes(self, directed=False) -> list:
+    def get_connected_nodes(self, directed: bool = None, graph: list = None) -> list:
+        if graph is None:
+            graph = self.G
+        if directed is None:
+            directed = False
+
         cc = [None] * (self.max_id + 1)
         visited = [False] * (self.max_id + 1)
         counts = [0] * (self.max_id + 1)
 
-        for edge in self.G:  # edge of (from,to)
+        for edge in graph:  # edge of (from,to)
             node_from = edge[0]
             node_to = edge[1]
 
@@ -153,12 +158,94 @@ class connected_helper:
         self.connected_counts_alt2 = mysum
         return mysum
 
+    # Task 5 parts
+    def get_reversed_graph(self, graph=None):
+        if graph is None:
+            graph = self.G
 
-# %%
+        self.R = [None] * len(graph)
+        for i, edge in enumerate(graph):  # edge of (from,to)
+            node_from = edge[0]
+            node_to = edge[1]
+            self.R[i] = [node_to, node_from]
+
+        return self.R
+
+    def kosaraju(self, G=None):
+        # if a graph is already imported it is in the
+        # [[1,2], [2,3]] format and needs to be connected component instead.
+        if G is None:
+            G = self.get_connected_nodes(directed=True, graph=self.G)
+        else:
+            G = self.get_connected_nodes(directed=True, graph=G)
+
+        # this has to be interative as stack overflow on datasets with more than 500 edges.
+        # postorder DFS on G to transpose the graph and push root vertices to L
+        n = len(G)
+        T = [None] * n  # [[] for _ in range(n)]
+        # T = [[] for _ in range(n)]
+        L = []
+        U = [False] * n
+
+        for u in range(n):
+            if not U[u]:
+                U[u], S = True, [u]
+                while S:
+                    u, done = S[-1], True
+                    for v in G[u]:
+                        T[v].append(u)
+                        if not U[v]:
+                            U[v], done = True, False
+                            S.append(v)
+                            break
+                    if done:
+                        S.pop()
+                        L.append(u)
+
+        # postorder DFS on T to pop root vertices from L and mark SCCs
+        C = [None] * n
+        while L:
+            r = L.pop()
+            S = [r]
+            if U[r]:
+                U[r], C[r] = False, r
+            while S:
+                u, done = S[-1], True
+                for v in T[u]:
+                    if U[v]:
+                        U[v] = done = False
+                        S.append(v)
+                        C[v] = r
+                        break
+                if done:
+                    S.pop()
+
+        return C
+
 
 class test_one(unittest.TestCase):
     def setUp(self) -> None:
         pass
+
+    def test_dfs_one(self):
+        # arr = [[1, 2], [2, 3], [2, 5], [3, 4], [4, 6], [5, 1], [6, 3]]
+        arr = [[0, 1], [1, 0], [1, 2], [2, 0], [2, 3], [2, 4], [3, 4], [4, 5], [5, 6], [6, 4], [7, 6]]
+        #  cn_exp = [[1], [0, 2], [0, 3, 4], [4], [5], [6], [4], [6]]
+        s = connected_helper(G=arr)
+        s.max_id = 7
+
+        act = s.kosaraju(arr)
+        exp = [0, 0, 0, 3, 4, 4, 4, 7]
+        self.assertIsNotNone(act)
+        self.assertListEqual(act, exp, 'alg done...')
+       
+    def test_reverse(self):
+        arr = [['0', '2'], ['0', '3'], ['1', '1']]
+        exp = [['2', '0'], ['3', '0'], ['1', '1']]
+        s = connected_helper(G=arr)
+        s.max_id = 3
+        act = s.get_reversed_graph()
+        self.assertListEqual(exp, act, 'reverse to orig ok')
 
     def test_one(self):
         arr = [['0', '2'], ['0', '3'], ['1', '1']]
@@ -191,6 +278,6 @@ class test_one(unittest.TestCase):
 
 
 
-        
+
 
 # %%

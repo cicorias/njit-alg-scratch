@@ -1,5 +1,5 @@
 # %%
-from test_foobar import connected_helper
+from test_miniproject2full import connected_helper
 
 s_fb = connected_helper()
 edges_facebook = s_fb.import_data('./data/facebook_combined.txt', skip_header=False, sep=' ', cols=2)
